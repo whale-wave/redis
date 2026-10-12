@@ -1,0 +1,10 @@
+# Local credentials; keep the template tracked.
+.env
+.env.*
+!.env.example
+
+# Runtime files.
+data/
+backups/
+*.swp
+*.swo

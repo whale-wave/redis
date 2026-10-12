@@ -1,0 +1,33 @@
+services:
+  redis:
+    image: redis:8-alpine
+    restart: unless-stopped
+    mem_limit: 384m
+    ports:
+      - "16379:6379"
+
+    # 从同目录 .env 读取密码，未填写时拒绝启动。
+    command:
+      - redis-server
+      - /usr/local/etc/redis/redis.conf
+      - --requirepass
+      - "${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}"
+
+    volumes:
+      - ./conf/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - ./data:/data
+
+    networks:
+      - shared-redis
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# 同机其他项目可通过 external 网络加入，并连接 redis:6379。
+networks:
+  shared-redis:
+    name: shared-redis
+    driver: bridge
